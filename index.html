@@ -1,0 +1,693 @@
+Opportunities are always there!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job-Location Swap</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .rotating-description {
+            height: 60px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .description-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            font-weight: 500;
+        }
+
+        .description-text.active {
+            opacity: 1;
+        }
+
+        .input-section {
+            padding: 25px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        .input-group input, .input-group select {
+            padding: 10px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-section {
+            padding: 20px 30px;
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr) auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #495057;
+        }
+
+        .filter-group input, .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .table-section {
+            padding: 20px 30px;
+        }
+
+        .creator-view {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .creator-view h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            background: #e7f3ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 5px;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        th::after {
+            content: '↕';
+            margin-left: 8px;
+            opacity: 0.7;
+        }
+
+        th.sorted-asc::after {
+            content: '↑';
+        }
+
+        th.sorted-desc::after {
+            content: '↓';
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #eaeaea;
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        td {
+            padding: 14px 12px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .status-new {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        @media (max-width: 1400px) {
+            .input-row {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .input-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .filter-controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .input-row, .filter-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Job-Location Swap</h1>
+            <div class="rotating-description">
+                <div class="description-text active" style="color: #ffcc00;">Check job opportunities in your area.</div>
+                <div class="description-text" style="color: #4cd964;">Reduce your travel time.</div>
+                <div class="description-text" style="color: #5ac8fa;">Apply for personal improvement.</div>
+                <div class="description-text" style="color: #ff9500;">Find jobs closer to home.</div>
+            </div>
+        </header>
+        
+        <section class="input-section">
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" placeholder="Enter city">
+                </div>
+                <div class="input-group">
+                    <label for="livingPlace">Living Place</label>
+                    <input type="text" id="livingPlace" placeholder="Apartment, House, etc.">
+                </div>
+                <div class="input-group">
+                    <label for="workPlace">Work Place</label>
+                    <input type="text" id="workPlace" placeholder="Office, Remote, etc.">
+                </div>
+                <div class="input-group">
+                    <label for="jobPosition">Job Position</label>
+                    <input type="text" id="jobPosition" placeholder="Enter job position">
+                </div>
+                <div class="input-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" placeholder="Enter company name">
+                </div>
+                <div class="input-group">
+                    <label for="salary">Salary ($)</label>
+                    <input type="number" id="salary" placeholder="Enter salary">
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Enter email">
+                </div>
+                <div class="input-group">
+                    <label for="phone">Phone No</label>
+                    <input type="tel" id="phone" placeholder="Enter phone number">
+                </div>
+                <div class="input-group">
+                    <label for="status">Status</label>
+                    <select id="status" disabled>
+                        <option value="New">New</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn-primary" onclick="addUser()">Save Entry</button>
+                <button class="btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </section>
+        
+        <section class="filter-section">
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="filterCity">Filter by City</label>
+                    <input type="text" id="filterCity" placeholder="Enter city" onkeyup="filterTable()">
+                </div>
+                <div class="filter-group">
+                    <label for="filterJobPosition">Filter by Job Position</label>
+                    <input type="text" id="filterJobPosition" placeholder="Enter job position" onkeyup="filterTable()">
+                </div>
+                <div class="filter-group">
+                    <label for="filterCompany">Filter by Company</label>
+                    <input type="text" id="filterCompany" placeholder="Enter company" onkeyup="filterTable()">
+                </div>
+                <div class="filter-group">
+                    <label for="filterSalary">Filter by Min Salary</label>
+                    <input type="number" id="filterSalary" placeholder="Min salary" onkeyup="filterTable()">
+                </div>
+                <div class="filter-group">
+                    <button class="btn-secondary" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+        </section>
+        
+        <section class="table-section">
+            <div class="creator-view">
+                <h3>Creator View - Private Contact Information</h3>
+                <div id="creatorContacts">
+                    <!-- Private contact information will appear here -->
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('city')">City</th>
+                            <th onclick="sortTable('livingPlace')">Living Place</th>
+                            <th onclick="sortTable('workPlace')">Work Place</th>
+                            <th onclick="sortTable('jobPosition')">Job Position</th>
+                            <th onclick="sortTable('company')">Company</th>
+                            <th onclick="sortTable('salary')">Salary</th>
+                            <th onclick="sortTable('status')">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Sample initial data
+        const initialData = [
+            {
+                city: "New York",
+                livingPlace: "Apartment",
+                workPlace: "Office",
+                jobPosition: "Software Engineer",
+                company: "Tech Solutions Inc.",
+                salary: 85000,
+                status: "New",
+                email: "john.ny@email.com",
+                phone: "+1 (555) 123-4567",
+                id: 1
+            },
+            {
+                city: "San Francisco",
+                livingPlace: "Condominium",
+                workPlace: "Hybrid",
+                jobPosition: "Product Manager",
+                company: "Innovate Labs",
+                salary: 110000,
+                status: "New",
+                email: "sarah.sf@email.com",
+                phone: "+1 (555) 987-6543",
+                id: 2
+            },
+            {
+                city: "Chicago",
+                livingPlace: "House",
+                workPlace: "Remote",
+                jobPosition: "Data Analyst",
+                company: "Data Insights Co.",
+                salary: 75000,
+                status: "New",
+                email: "mike.chi@email.com",
+                phone: "+1 (555) 456-7890",
+                id: 3
+            }
+        ];
+
+        let currentData = [...initialData];
+        let currentSort = { column: 'city', order: 'asc' };
+        let nextId = 4;
+        let rowColors = [
+            'rgba(75, 108, 183, 0.05)',
+            'rgba(245, 247, 250, 0.7)',
+            'rgba(195, 207, 226, 0.1)',
+            'rgba(248, 249, 250, 0.9)',
+            'rgba(233, 236, 239, 0.5)',
+            'rgba(220, 237, 241, 0.3)',
+            'rgba(255, 243, 205, 0.3)'
+        ];
+
+        // Initialize table with sample data
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable(currentData);
+            updateCreatorContacts();
+            startDescriptionRotation();
+        });
+
+        // Rotating description
+        function startDescriptionRotation() {
+            const descriptions = document.querySelectorAll('.description-text');
+            let currentIndex = 0;
+            
+            setInterval(() => {
+                descriptions[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % descriptions.length;
+                descriptions[currentIndex].classList.add('active');
+            }, 3000);
+        }
+
+        // Add user to the table
+        function addUser() {
+            // Get input values
+            const city = document.getElementById('city').value.trim();
+            const livingPlace = document.getElementById('livingPlace').value.trim();
+            const workPlace = document.getElementById('workPlace').value.trim();
+            const jobPosition = document.getElementById('jobPosition').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const salary = document.getElementById('salary').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const status = "New";
+
+            // Validate required fields
+            if (!city || !livingPlace || !workPlace || !jobPosition || !company || !salary || !email || !phone) {
+                alert('Please fill in all fields including email and phone');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            // Create user object
+            const user = {
+                city,
+                livingPlace,
+                workPlace,
+                jobPosition,
+                company,
+                salary: parseInt(salary),
+                status,
+                email,
+                phone,
+                id: nextId++
+            };
+
+            // Add to the beginning of the data array
+            currentData.unshift(user);
+
+            // Re-render table
+            renderTable(currentData);
+            
+            // Update creator contacts
+            updateCreatorContacts();
+
+            // Clear form
+            clearForm();
+        }
+
+        // Render table with data
+        function renderTable(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="empty-row">No records found matching your criteria</td></tr>';
+                return;
+            }
+
+            data.forEach((user, index) => {
+                const row = document.createElement('tr');
+                
+                // Apply alternating row colors
+                const colorIndex = index % rowColors.length;
+                row.style.backgroundColor = rowColors[colorIndex];
+                
+                // Format salary with commas
+                const formattedSalary = user.salary.toLocaleString();
+                
+                // Create table cells (contact is not displayed in public table)
+                row.innerHTML = `
+                    <td>${user.city}</td>
+                    <td>${user.livingPlace}</td>
+                    <td>${user.workPlace}</td>
+                    <td>${user.jobPosition}</td>
+                    <td>${user.company}</td>
+                    <td>$${formattedSalary}</td>
+                    <td><span class="status-new">${user.status}</span></td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+
+            updateSortIndicators();
+        }
+
+        // Update creator contacts section
+        function updateCreatorContacts() {
+            const contactsContainer = document.getElementById('creatorContacts');
+            contactsContainer.innerHTML = '';
+            
+            if (currentData.length === 0) {
+                contactsContainer.innerHTML = '<p>No contacts available</p>';
+                return;
+            }
+            
+            currentData.forEach(user => {
+                const contactElement = document.createElement('div');
+                contactElement.style.marginBottom = '15px';
+                contactElement.style.padding = '10px';
+                contactElement.style.background = '#f8f9fa';
+                contactElement.style.borderRadius = '6px';
+                contactElement.innerHTML = `
+                    <strong>${user.jobPosition} at ${user.company}</strong> (${user.city})<br>
+                    <span class="contact-info">Email: ${user.email}</span>
+                    <span class="contact-info">Phone: ${user.phone}</span>
+                `;
+                contactsContainer.appendChild(contactElement);
+            });
+        }
+
+        // Clear the input form
+        function clearForm() {
+            document.getElementById('city').value = '';
+            document.getElementById('livingPlace').value = '';
+            document.getElementById('workPlace').value = '';
+            document.getElementById('jobPosition').value = '';
+            document.getElementById('company').value = '';
+            document.getElementById('salary').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+        }
+
+        // Filter table based on input values
+        function filterTable() {
+            const cityFilter = document.getElementById('filterCity').value.toLowerCase();
+            const jobPositionFilter = document.getElementById('filterJobPosition').value.toLowerCase();
+            const companyFilter = document.getElementById('filterCompany').value.toLowerCase();
+            const salaryFilter = document.getElementById('filterSalary').value;
+
+            const filteredData = currentData.filter(user => {
+                return (
+                    (cityFilter === '' || user.city.toLowerCase().includes(cityFilter)) &&
+                    (jobPositionFilter === '' || user.jobPosition.toLowerCase().includes(jobPositionFilter)) &&
+                    (companyFilter === '' || user.company.toLowerCase().includes(companyFilter)) &&
+                    (salaryFilter === '' || user.salary >= parseInt(salaryFilter || 0))
+                );
+            });
+
+            renderTable(filteredData);
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('filterCity').value = '';
+            document.getElementById('filterJobPosition').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterSalary').value = '';
+            renderTable(currentData);
+        }
+
+        // Sort table by column
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.order = 'asc';
+            }
+
+            currentData.sort((a, b) => {
+                let aValue = a[column];
+                let bValue = b[column];
+
+                // Handle numeric sorting for salary
+                if (column === 'salary') {
+                    return currentSort.order === 'asc' ? aValue - bValue : bValue - aValue;
+                }
+
+                // String sorting for other columns
+                if (aValue < bValue) return currentSort.order === 'asc' ? -1 : 1;
+                if (aValue > bValue) return currentSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderTable(currentData);
+        }
+
+        // Update sort indicators in table headers
+        function updateSortIndicators() {
+            // Remove all sort indicators
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            // Add indicator to current sort column
+            const header = Array.from(document.querySelectorAll('th')).find(th => 
+                th.textContent.trim().toLowerCase().includes(currentSort.column.toLowerCase())
+            );
+            
+            if (header) {
+                header.classList.add(currentSort.order === 'asc' ? 'sorted-asc' : 'sorted-desc');
+            }
+        }
+    </script>
+</body>
+</html>
+```
