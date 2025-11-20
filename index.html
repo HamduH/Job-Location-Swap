@@ -1,10 +1,15 @@
-Opportunities are always there!
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job-Location Swap</title>
+    <title>Job Location Swap - Find Better Job Opportunities Near You</title>
+    <meta name="description" content="Job Location Swap helps you find job opportunities in your area to reduce commute time. Search for jobs by city, position, company and salary. Improve your work-life balance today.">
+    <meta name="keywords" content="job location swap, jobs near me, local jobs, reduce commute, work from home, job opportunities, career change, work life balance">
+    <meta name="author" content="Job Location Swap">
+    <meta property="og:title" content="Job Location Swap - Find Local Job Opportunities">
+    <meta property="og:description" content="Reduce your commute time with Job Location Swap. Find better job opportunities in your area.">
+    <meta property="og:type" content="website">
     <style>
         * {
             box-sizing: border-box;
@@ -172,29 +177,6 @@ Opportunities are always there!
             padding: 20px 30px;
         }
 
-        .creator-view {
-            background: #fff3cd;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            border-left: 4px solid #ffc107;
-        }
-
-        .creator-view h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .contact-info {
-            background: #e7f3ff;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-family: monospace;
-            margin-top: 5px;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
         .table-container {
             overflow-x: auto;
             border-radius: 8px;
@@ -273,6 +255,24 @@ Opportunities are always there!
             padding: 30px;
         }
 
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #4caf50;
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
         @media (max-width: 1400px) {
             .input-row {
                 grid-template-columns: repeat(5, 1fr);
@@ -304,9 +304,11 @@ Opportunities are always there!
     </style>
 </head>
 <body>
+    <div class="notification" id="notification">Entry saved successfully!</div>
+    
     <div class="container">
         <header>
-            <h1>Job-Location Swap</h1>
+            <h1>Job Location Swap</h1>
             <div class="rotating-description">
                 <div class="description-text active" style="color: #ffcc00;">Check job opportunities in your area.</div>
                 <div class="description-text" style="color: #4cd964;">Reduce your travel time.</div>
@@ -388,13 +390,6 @@ Opportunities are always there!
         </section>
         
         <section class="table-section">
-            <div class="creator-view">
-                <h3>Creator View - Private Contact Information</h3>
-                <div id="creatorContacts">
-                    <!-- Private contact information will appear here -->
-                </div>
-            </div>
-            
             <div class="table-container">
                 <table id="userTable">
                     <thead>
@@ -429,7 +424,8 @@ Opportunities are always there!
                 status: "New",
                 email: "john.ny@email.com",
                 phone: "+1 (555) 123-4567",
-                id: 1
+                id: 1,
+                timestamp: new Date('2023-10-15').getTime()
             },
             {
                 city: "San Francisco",
@@ -441,7 +437,8 @@ Opportunities are always there!
                 status: "New",
                 email: "sarah.sf@email.com",
                 phone: "+1 (555) 987-6543",
-                id: 2
+                id: 2,
+                timestamp: new Date('2023-09-22').getTime()
             },
             {
                 city: "Chicago",
@@ -453,13 +450,14 @@ Opportunities are always there!
                 status: "New",
                 email: "mike.chi@email.com",
                 phone: "+1 (555) 456-7890",
-                id: 3
+                id: 3,
+                timestamp: new Date('2023-11-05').getTime()
             }
         ];
 
-        let currentData = [...initialData];
+        let currentData = [];
         let currentSort = { column: 'city', order: 'asc' };
-        let nextId = 4;
+        let nextId = 1;
         let rowColors = [
             'rgba(75, 108, 183, 0.05)',
             'rgba(245, 247, 250, 0.7)',
@@ -470,10 +468,39 @@ Opportunities are always there!
             'rgba(255, 243, 205, 0.3)'
         ];
 
+        // Load data from local storage or initialize with sample data
+        function loadData() {
+            const savedData = localStorage.getItem('jobLocationSwapData');
+            if (savedData) {
+                currentData = JSON.parse(savedData);
+                // Find the highest ID to continue from
+                nextId = currentData.length > 0 ? Math.max(...currentData.map(item => item.id)) + 1 : 1;
+            } else {
+                currentData = [...initialData];
+                nextId = 4;
+                saveData();
+            }
+        }
+
+        // Save data to local storage
+        function saveData() {
+            localStorage.setItem('jobLocationSwapData', JSON.stringify(currentData));
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
         // Initialize table with sample data
         document.addEventListener('DOMContentLoaded', function() {
+            loadData();
             renderTable(currentData);
-            updateCreatorContacts();
             startDescriptionRotation();
         });
 
@@ -526,17 +553,21 @@ Opportunities are always there!
                 status,
                 email,
                 phone,
-                id: nextId++
+                id: nextId++,
+                timestamp: new Date().getTime()
             };
 
             // Add to the beginning of the data array
             currentData.unshift(user);
 
+            // Save to local storage
+            saveData();
+
             // Re-render table
             renderTable(currentData);
-            
-            // Update creator contacts
-            updateCreatorContacts();
+
+            // Show notification
+            showNotification('Entry saved successfully!');
 
             // Clear form
             clearForm();
@@ -577,31 +608,6 @@ Opportunities are always there!
             });
 
             updateSortIndicators();
-        }
-
-        // Update creator contacts section
-        function updateCreatorContacts() {
-            const contactsContainer = document.getElementById('creatorContacts');
-            contactsContainer.innerHTML = '';
-            
-            if (currentData.length === 0) {
-                contactsContainer.innerHTML = '<p>No contacts available</p>';
-                return;
-            }
-            
-            currentData.forEach(user => {
-                const contactElement = document.createElement('div');
-                contactElement.style.marginBottom = '15px';
-                contactElement.style.padding = '10px';
-                contactElement.style.background = '#f8f9fa';
-                contactElement.style.borderRadius = '6px';
-                contactElement.innerHTML = `
-                    <strong>${user.jobPosition} at ${user.company}</strong> (${user.city})<br>
-                    <span class="contact-info">Email: ${user.email}</span>
-                    <span class="contact-info">Phone: ${user.phone}</span>
-                `;
-                contactsContainer.appendChild(contactElement);
-            });
         }
 
         // Clear the input form
@@ -690,4 +696,3 @@ Opportunities are always there!
     </script>
 </body>
 </html>
-```
